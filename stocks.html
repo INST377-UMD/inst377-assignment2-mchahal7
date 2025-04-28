@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>Stocks Page</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <h1>Let's chart some stocks!</h1>
+
+        <!-- Navigation Bar -->
+        <nav id = "main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="stocks.html">Stocks</a></li>
+                <li><a href="dogs.html">Dogs</a></li>
+            </ul>
+        </nav>
+
+        <!-- Stock Lookup Section -->
+         <div class="stock-lookup">
+            <input type="text" id="stock-input" placeholder="Enter Stock Ticker">
+
+            <select id="day-range">
+                <option value="30">30 Days</option>
+                <option value="60">60 Days</option>
+                <option value="90">90 Days</option>
+            </select>
+
+            <button id="stock-btn" class="button-24">Lookup Stock</button>
+         </div>
+
+        <!-- Chart Section -->
+            <div class="chart-container" style="width: 100%; height: 400px;">
+                <h2>Stock Chart</h2>
+                <canvas id="stock-chart"></canvas>
+            </div>
+
+        <!-- Reddit Top 5 Table -->
+         <table id ="reddit-stocks">
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Comment Count</th>
+                    <th>Sentiment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--Data-->
+            </tbody>
+         </table>
+
+        <!-- Audio Instructions -->
+    </body>
+</html>
