@@ -3,4 +3,120 @@
         <title>Dogs Page</title>
         <link rel="stylesheet" href="style.css">
     </head>
+
+    <body>
+        <h1>INST377 - Dogs</h1>
+        <!-- Navigation Bar -->
+        <nav id = "main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="stocks.html">Stocks</a></li>
+                <li><a href="dogs.html">Dogs</a></li>
+            </ul>
+        </nav>
+
+        <h1>Dogs!</h1>
+
+        <!-- Dog Images Carousel -->
+         <div id="dog-carousel" class="slider-container">
+
+         </div>
+
+        <!-- Dogs Breeds Buttons -->
+         <div id="breed-buttons">
+
+         </div>
+
+        <!-- Dog Breed Info Section -->
+         <div id ="breed-info" style="display: none;"> <!-- Hidden at first -->
+            <h2 id="breed-name"></h2>
+            <p id="breed-description"></p>
+            <p>Min Lifespan: <span id="min-life"></span> years</p>
+            <p>Max Lifespan: <span id="max-life"></span> years</p>
+         </div>
+
+        <!-- Audio Section -->
+
+        <!-- Javascript -->
+        <script>
+
+         document.addEventListener('DOMContentLoaded', () => {
+            loadRandomDogs();
+            fetchDogBreeds();
+         });
+
+        // I'm creating a function called loadRandomDogs() to load 10 random dog images
+        function loadRandomDogs() {
+            fetch('https://dog.ceo/api/breeds/image/random/10')
+                .then(response => response.json())
+                .then(data => {
+                    const carousel = document.getElementById('dog-carousel');
+                    carousel.innerHTML = ''; // This will clear any existing content
+                    
+                    data.message.forEach(imageUrl => {
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.classList.add('carousel-image');
+                        carousel.appendChild(img);
+                    });
+
+                    // Creating a simple slider
+                    new SimpleSlider('#dog-carousel');
+                })
+                .catch(error => console.error('Error loading random dogs:', error));
+        }
+
+        // Fetching dog names and creating buttons
+        function fetchDogBreeds() {
+            fetch('https://dog.ceo/api/breeds/list/all')
+                .then(response => response.json())
+                .then(data => {
+                    const breeds = Object.keys(data.message);
+                    const firstTenBreeds = breeds.slice(0,10);
+                    createBreedButtons(firstTenBreeds);
+                })
+                .catch(error => console.error('Error fetching dog breeds:', error));
+        }
+
+        // Now, creating a function to fetch all dog breeds and create buttons
+        function createBreedButtons(breeds) {
+            const breedButtonsDiv = document.getElementById('breed-buttons');
+            breedButtonsDiv.innerHTML = ''; // Similar to the images, this will clear any existing buttons
+
+            breeds.forEach(breed => {
+                const button = document.createElement('button');
+                button.textContent = breed;
+                button.classList.add('breed-button'); // for CSS
+                button.addEventListener('click', () => fetchBreedInfo(breed));
+                breedButtonsDiv.appendChild(button);
+            });
+        }
+
+        // Next, function to fetch and show breed information
+        function fetchBreedInfo(breed) {
+            fetch(`https://api.thedogapi.com/v1/breeds/search?q=${breed}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const dog = data[0];
+                        showBreedInfo(dog);
+                    } else {
+                        console.error('Breed not found');
+                    }
+                })
+        .catch(error => console.error('Error fetching breed info:', error));
+}
+        
+        function showBreedInfo(dog) {
+            const breedInfoDiv = document.getElementById('breed-info');
+            breedInfoDiv.innerHTML = `
+            <h2>${dog.name}</h2>
+            <p><strong>Life Span:</strong> ${dog.life_span}</p>
+            <p><strong>Temperament:</strong> ${dog.temperament}</p>
+    `;
+}
+
+
+         </script>
+    </body>
 </html>
