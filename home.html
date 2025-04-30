@@ -7,6 +7,7 @@
     <body>
         <h1>INST377 - Activities</h1>
 
+        <!-- Navigation Bar -->
         <nav id = "main-nav">
             <ul>
                 <li><a href="home.html">Home</a></li>
@@ -15,14 +16,37 @@
             </ul>
         </nav>
 
-        <h2>These are some different activities we can try!</h2>
+        <h1>These are some different activities we can try!</h1>
 
-        <!-- Button Section-->
+        <!-- Button Section -->
          <div id="home-buttons" style="text-align: center; margin-top: 50px;">
             <a href="stocks.html"><button class="button-24" role="button">Stocks</button></a>
             <a href="dogs.html"><button class="button-24" role="button">Dogs</button></a>
          </div>
 
+         <!-- Quote Section -->
+         <div id="quote-box" class="quote-box">
+            <p>Quote of the Day</p>
+        </div>
+
+        <!-- Audio Section -->
+
+        <!-- Javascript for Quote Section -->
+         <script>
+            async function getQuote () {
+                try {
+                    const response = await fetch('https://zenquotes.io/api/random');
+                    const data = await response.json();
+                    const quoteText = data[0]['q'];
+                    const quoteAuthor = data[0]['a'];
+                    document.getElementById('quote-box').innerHTML = `"${quoteText}" <br> - ${quoteAuthor}`;
+                } catch (error) {
+                    console.error('Error fetching quote:', error);
+                    document.getElementById('quote-box').innerText = "Failed to load quote. Try refreshing!";
+                }
+            }
+            window.onload = getQuote;
+         </script>
 
     </body>
 
