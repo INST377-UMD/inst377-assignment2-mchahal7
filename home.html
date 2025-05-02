@@ -2,6 +2,7 @@
     <head>
         <title>Home Page</title>
         <link rel="stylesheet" href="style.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
     </head>
 
     <body>
@@ -30,6 +31,19 @@
         </div>
 
         <!-- Audio Section -->
+         <div id="audio-controls" class="audio-box">
+            <h2>In this webpage there are options to Navigate using Audio!</h2>
+            <h3>Ensure your mic is enabled to be able to use this feature</h3>
+            <ul>
+                <li>Say: <strong>Hello</strong> – alerts "Hello World"</li>
+                <li>Say: <strong>Change the color to red</strong> - Changes the background color</li>
+                <li>Say: <strong>Navigate to a different page</strong> - Navigates to a different page</li>
+            </ul>
+            <button onclick="turnOnAudio()" class="audio-button">Turn On Audio</button>
+            <button onclick="turnOffAudio()" class="audio-button">Turn Off Audio</button>
+
+         </div>
+
 
         <!-- Javascript for Quote Section -->
          <script>
@@ -47,6 +61,33 @@
             }
             window.onload = getQuote;
          </script>
+
+         <!-- Javascript for Audio Section -->
+          <script>
+            if (annyang) {
+                const commands = {
+                    'hello': () => alert('Hello World'),
+                    'change the color to *color': color => document.body.style.backgroundColor = color,
+                    'navigate to *page': page => {
+                        const lowerPage = page.toLowerCase();
+                        if (lowerPage === 'home') window.location.href = 'home.html';
+                        else if (lowerPage === 'stocks') window.location.href = 'stocks.html';
+                        else if (lowerPage === 'dogs') window.location.href = 'dogs.html';
+                    }
+                };
+
+                annyang.addCommands(commands);
+                annyang.start();
+            }
+            function turnOffAudio() {
+                if (annyang) annyang.abort();
+            }
+            
+            function turnOnAudio() {
+                if (annyang) annyang.start();
+            }
+
+          </script>
 
     </body>
 
