@@ -17,18 +17,21 @@
 
         <h1>Dogs!</h1>
 
-        <!-- Dog Images Carousel -->
-         <div id="dog-carousel" class="slider-container">
+        <div class="slider-container">
+            <button class="arrow left-arrow">&#8592;</button>
+            <div class="slider-wrapper" id="slider-wrapper">
 
-         </div>
+            </div>
+            <button class="arrow right-arrow">&#8594;</button>
+        </div>
 
         <!-- Dogs Breeds Buttons -->
-         <div id="breed-buttons">
+         <div id="button-24">
 
          </div>
 
         <!-- Dog Breed Info Section -->
-         <div id ="breed-info" style="display: none;"> <!-- Hidden at first -->
+         <div id ="breed-info" class="breed-info-box" style="display: none;"> <!-- Hidden at first -->
             <h2 id="breed-name"></h2>
             <p id="breed-description"></p>
             <p>Min Lifespan: <span id="min-life"></span> years</p>
@@ -50,20 +53,40 @@
             fetch('https://dog.ceo/api/breeds/image/random/10')
                 .then(response => response.json())
                 .then(data => {
-                    const carousel = document.getElementById('dog-carousel');
-                    carousel.innerHTML = ''; // This will clear any existing content
+                    const wrapper = document.getElementById('slider-wrapper');
+                    wrapper.innerHTML = '';
                     
                     data.message.forEach(imageUrl => {
                         const img = document.createElement('img');
                         img.src = imageUrl;
                         img.classList.add('carousel-image');
-                        carousel.appendChild(img);
+                        wrapper.appendChild(img);
                     });
 
-                    // Creating a simple slider
-                    new SimpleSlider('#dog-carousel');
+                    let currentIndex = 0;
+                    // I looked this up online on how to shift the entire slider to show the correct image
+                    const updateSlider = () => {
+                        const width = wrapper.clientWidth;
+                        wrapper.style.transform = `translateX(-${currentIndex * width}px)`;
+                    };
+
+                    document.querySelector('.left-arrow').onclick = () => {
+                        if(currentIndex > 0) {
+                            currentIndex--;
+                            updateSlider();
+                        }
+                    };
+
+                    document.querySelector('.right-arrow').onclick = () => {
+                        if(currentIndex < data.message.length - 1) {
+                            currentIndex++;
+                            updateSlider();
+                        }
+                    };
+                    window.addEventListener('resize', updateSlider);
                 })
-                .catch(error => console.error('Error loading random dogs:', error));
+                .catch(error => console.error('Error loading random dogs', error));
+
         }
 
         // Fetching dog names and creating buttons
@@ -80,13 +103,13 @@
 
         // Now, creating a function to fetch all dog breeds and create buttons
         function createBreedButtons(breeds) {
-            const breedButtonsDiv = document.getElementById('breed-buttons');
+            const breedButtonsDiv = document.getElementById('button-24');
             breedButtonsDiv.innerHTML = ''; // Similar to the images, this will clear any existing buttons
 
             breeds.forEach(breed => {
                 const button = document.createElement('button');
                 button.textContent = breed;
-                button.classList.add('breed-button'); // for CSS
+                button.classList.add('button-24'); // for CSS
                 button.addEventListener('click', () => fetchBreedInfo(breed));
                 breedButtonsDiv.appendChild(button);
             });
@@ -106,15 +129,27 @@
                 })
         .catch(error => console.error('Error fetching breed info:', error));
 }
-        
+        // Show the info
         function showBreedInfo(dog) {
             const breedInfoDiv = document.getElementById('breed-info');
-            breedInfoDiv.innerHTML = `
-            <h2>${dog.name}</h2>
-            <p><strong>Life Span:</strong> ${dog.life_span}</p>
-            <p><strong>Temperament:</strong> ${dog.temperament}</p>
-    `;
-}
+            document.getElementById('breed-name').textContent = dog.name;
+            document.getElementById('breed-description').textContent = dog.temperament
+
+            let minLife = '', maxLife = '';
+            if (dog.lfe_span) {
+                const match = dog.life_span.match(/(\d+)\s*-\s*(\d+)/);
+                if (match) {
+                    minLife = match[1];
+                    maxLife = match[2];
+                } else {
+                    minLife = maxlife = dog.life_span.replace(/\D/g, '');
+                }
+            }
+            document.getElementById('min-life').textContent = minLife;
+            document.getElementById('max-life').textContent = maxLife;
+
+            breedInfoDiv.style.display = 'block';
+        }
 
 
          </script>
