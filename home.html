@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>Home Page</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+    </head>
+
+    <body>
+        <h1>INST377 - Activities</h1>
+
+        <!-- Navigation Bar -->
+        <nav id = "main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="stocks.html">Stocks</a></li>
+                <li><a href="dogs.html">Dogs</a></li>
+            </ul>
+        </nav>
+
+        <h1>These are some different activities we can try!</h1>
+
+        <!-- Button Section -->
+         <div id="home-buttons" style="text-align: center; margin-top: 50px;">
+            <a href="stocks.html"><button class="button-24" role="button">Stocks</button></a>
+            <a href="dogs.html"><button class="button-24" role="button">Dogs</button></a>
+         </div>
+
+         <!-- Quote Section -->
+         <div id="quote-box" class="quote-box">
+            <p>Quote of the Day</p>
+        </div>
+
+        <!-- Audio Section -->
+         <div id="audio-controls" class="audio-box">
+            <h2>In this webpage there are options to Navigate using Audio!</h2>
+            <h3>Ensure your mic is enabled to be able to use this feature</h3>
+            <ul>
+                <li>Say: <strong>Hello</strong> – alerts "Hello World"</li>
+                <li>Say: <strong>Change the color to red</strong> - Changes the background color</li>
+                <li>Say: <strong>Navigate to a different page</strong> - Navigates to a different page</li>
+            </ul>
+            <button onclick="turnOnAudio()" class="audio-button">Turn On Audio</button>
+            <button onclick="turnOffAudio()" class="audio-button">Turn Off Audio</button>
+
+         </div>
+
+
+        <!-- Javascript for Quote Section -->
+         <script>
+            async function getQuote () {
+                try {
+                    const response = await fetch('https://zenquotes.io/api/random');
+                    const data = await response.json();
+                    const quoteText = data[0]['q'];
+                    const quoteAuthor = data[0]['a'];
+                    document.getElementById('quote-box').innerHTML = `"${quoteText}" <br> - ${quoteAuthor}`;
+                } catch (error) {
+                    console.error('Error fetching quote:', error);
+                    document.getElementById('quote-box').innerText = "Failed to load quote. Try refreshing!";
+                }
+            }
+            window.onload = getQuote;
+         </script>
+
+         <!-- Javascript for Audio Section -->
+          <script>
+            if (annyang) {
+                const commands = {
+                    'hello': () => alert('Hello World'),
+                    'change the color to *color': color => document.body.style.backgroundColor = color,
+                    'navigate to *page': page => {
+                        const lowerPage = page.toLowerCase();
+                        if (lowerPage === 'home') window.location.href = 'home.html';
+                        else if (lowerPage === 'stocks') window.location.href = 'stocks.html';
+                        else if (lowerPage === 'dogs') window.location.href = 'dogs.html';
+                    }
+                };
+
+                annyang.addCommands(commands);
+                annyang.start();
+            }
+            function turnOffAudio() {
+                if (annyang) annyang.abort();
+            }
+            
+            function turnOnAudio() {
+                if (annyang) annyang.start();
+            }
+
+          </script>
+
+    </body>
+
+</html>
+

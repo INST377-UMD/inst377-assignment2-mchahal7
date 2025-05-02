@@ -1,0 +1,198 @@
+<html>
+    <head>
+        <title>Dogs Page</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+    </head>
+
+    <body>
+        <h1>INST377 - Dogs</h1>
+        <!-- Navigation Bar -->
+        <nav id = "main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="stocks.html">Stocks</a></li>
+                <li><a href="dogs.html">Dogs</a></li>
+            </ul>
+        </nav>
+
+        <h1>Dogs!</h1>
+
+        <div class="slider-container">
+            <button class="arrow left-arrow">&#8592;</button>
+            <div class="slider-wrapper" id="slider-wrapper">
+
+            </div>
+            <button class="arrow right-arrow">&#8594;</button>
+        </div>
+
+        <!-- Dogs Breeds Buttons -->
+         <div id="button-24">
+
+         </div>
+
+        <!-- Dog Breed Info Section -->
+         <div id ="breed-info" class="breed-info-box" style="display: none;"> <!-- Hidden at first -->
+            <h2 id="breed-name"></h2>
+            <p id="breed-description"></p>
+            <p>Min Lifespan: <span id="min-life"></span> years</p>
+            <p>Max Lifespan: <span id="max-life"></span> years</p>
+         </div>
+
+        <!-- Audio Section -->
+        <div id="audio-controls" class="audio-box">
+            <h2>In this webpage there are options to Navigate using Audio!</h2>
+            <h3>Ensure your mic is enabled to be able to use this feature</h3>
+            <ul>
+                <li>Say: <strong>Load dog breed</strong> – Loads dog breed</li>
+                <li>Say: <strong>Change the color to red</strong> - Changes the page color</li>
+                <li>Say: <strong>Navigate to a different page</strong> - Navigates to a different page</li>
+            </ul>
+            <div class="button-container">
+                <button onclick="turnOnAudio()" class="audio-button">Turn On Audio</button>
+                <button onclick="turnOffAudio()" class="audio-button">Turn Off Audio</button>
+            </div>
+         </div>
+
+        <!-- Javascript -->
+        <script>
+
+         document.addEventListener('DOMContentLoaded', () => {
+            loadRandomDogs();
+            fetchDogBreeds();
+         });
+
+        // I'm creating a function called loadRandomDogs() to load 10 random dog images
+        function loadRandomDogs() {
+            fetch('https://dog.ceo/api/breeds/image/random/10')
+                .then(response => response.json())
+                .then(data => {
+                    const wrapper = document.getElementById('slider-wrapper');
+                    wrapper.innerHTML = '';
+                    
+                    data.message.forEach(imageUrl => {
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.classList.add('carousel-image');
+                        wrapper.appendChild(img);
+                    });
+
+                    let currentIndex = 0;
+                    // I looked this up online on how to shift the entire slider to show the correct image
+                    const updateSlider = () => {
+                        const width = wrapper.clientWidth;
+                        wrapper.style.transform = `translateX(-${currentIndex * width}px)`;
+                    };
+
+                    document.querySelector('.left-arrow').onclick = () => {
+                        if(currentIndex > 0) {
+                            currentIndex--;
+                            updateSlider();
+                        }
+                    };
+
+                    document.querySelector('.right-arrow').onclick = () => {
+                        if(currentIndex < data.message.length - 1) {
+                            currentIndex++;
+                            updateSlider();
+                        }
+                    };
+                    window.addEventListener('resize', updateSlider);
+                })
+                .catch(error => console.error('Error loading random dogs', error));
+
+        }
+
+        // Fetching dog names and creating buttons
+        function fetchDogBreeds() {
+            fetch('https://dog.ceo/api/breeds/list/all')
+                .then(response => response.json())
+                .then(data => {
+                    const breeds = Object.keys(data.message);
+                    const firstTenBreeds = breeds.slice(0,10);
+                    createBreedButtons(firstTenBreeds);
+                })
+                .catch(error => console.error('Error fetching dog breeds:', error));
+        }
+
+        // Now, creating a function to fetch all dog breeds and create buttons
+        function createBreedButtons(breeds) {
+            const breedButtonsDiv = document.getElementById('button-24');
+            breedButtonsDiv.innerHTML = ''; // Similar to the images, this will clear any existing buttons
+
+            breeds.forEach(breed => {
+                const button = document.createElement('button');
+                button.textContent = breed;
+                button.classList.add('button-24'); // for CSS
+                button.addEventListener('click', () => fetchBreedInfo(breed));
+                breedButtonsDiv.appendChild(button);
+            });
+        }
+
+        // Next, function to fetch and show breed information
+        function fetchBreedInfo(breed) {
+            fetch(`https://api.thedogapi.com/v1/breeds/search?q=${breed}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const dog = data[0];
+                        showBreedInfo(dog);
+                    } else {
+                        console.error('Breed not found');
+                    }
+                })
+        .catch(error => console.error('Error fetching breed info:', error));
+}
+        // Show the info
+        function showBreedInfo(dog) {
+            const breedInfoDiv = document.getElementById('breed-info');
+            document.getElementById('breed-name').textContent = dog.name;
+            document.getElementById('breed-description').textContent = dog.temperament
+
+            let minLife = '', maxLife = '';
+            if (dog.lfe_span) {
+                const match = dog.life_span.match(/(\d+)\s*-\s*(\d+)/);
+                if (match) {
+                    minLife = match[1];
+                    maxLife = match[2];
+                } else {
+                    minLife = maxlife = dog.life_span.replace(/\D/g, '');
+                }
+            }
+            document.getElementById('min-life').textContent = minLife;
+            document.getElementById('max-life').textContent = maxLife;
+
+            breedInfoDiv.style.display = 'block';
+        }
+         </script>
+
+         <!-- Javascript for audio box -->
+          <script>
+            if (annyang){
+                const commands = {
+                    'hello': () => alert('Hello World'),
+                    'change the color to *color': color => document.body.style.backgroundColor = color,
+                    'navigate to *page': page => {
+                        const lowerPage = page.toLowerCase();
+                        if (lowerPage === 'home') window.location.href = 'home.html';
+                        else if (lowerPage === 'stocks') window.location.href = 'stocks.html';
+                        else if (lowerPage === 'dogs') window.location.href = 'dogs.html';
+                    },
+                    'load dog breed *breed': breed => {
+                        fetchBreedInfo(breed.toLowerCase());
+                    }
+                };
+                annyang.addCommands(commands);
+                annyang.start();
+            }
+            function turnOffAudio() {
+                if(annyang) annyang.abort();
+            }
+            function turnOnAudio() {
+                if(annyang) annyang.start();
+            }
+
+          </script>
+
+    </body>
+</html>

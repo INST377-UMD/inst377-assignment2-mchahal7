@@ -1,0 +1,179 @@
+<html>
+    <head>
+        <title>Stocks Page</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> <!-- Chart.js library -->
+    </head>
+
+    <body>
+        <h1>INST377 - Stocks</h1>
+        <!-- Navigation Bar -->
+        <nav id="main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="stocks.html">Stocks</a></li>
+                <li><a href="dogs.html">Dogs</a></li>
+            </ul>
+        </nav>
+
+        <h1>Let's chart some stocks!</h1>
+
+        <!-- Stock Lookup Section -->
+        <div class="stock-lookup">
+            <input type="text" id="stock-input" placeholder="Enter Stock Ticker">
+
+            <select id="day-range">
+                <option value="30">30 Days</option>
+                <option value="60">60 Days</option>
+                <option value="90">90 Days</option>
+            </select>
+
+            <button id="stock-btn" class="button-24">Lookup Stock</button>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-container" style="width: 100%; height: 400px;">
+            <h2>Stock Chart</h2>
+            <canvas id="stock-chart"></canvas>
+        </div>
+
+        <!-- Reddit Top 5 Table -->
+        <table id="reddit-stocks">
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Comment Count</th>
+                    <th>Sentiment</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- Audio Section -->
+
+        <!-- Javascript -->
+        <script>
+            const stockBtn = document.getElementById('stock-btn');
+            const stockInput = document.getElementById('stock-input');
+            const dayRange = document.getElementById('day-range');
+
+            let chart;
+
+            stockBtn.addEventListener('click', async () => {
+                const ticker = stockInput.value.toUpperCase(); // this converts the text to uppercase
+                const days = dayRange.value;
+
+                if (!ticker) {
+                    alert('Please enter a stock ticker');
+                    return;
+                }
+
+                const endDate = new Date(); // today's date
+                const startDate = new Date();
+                startDate.setDate(endDate.getDate() - parseInt(days));
+
+                const formatDate = (d) => d.toISOString().split('T')[0]; // YYYY-MM-DD format
+
+                // API URL
+                const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${formatDate(startDate)}/${formatDate(endDate)}?adjusted=true&sort=asc&limit=120&apiKey=U0qxiwRLgCTTLMOF8xpcUvoQ9liwM7pB`;
+
+                try {
+                    const res = await fetch(url);
+                    const data = await res.json();
+
+                    if (!data.results || data.results.length === 0) {
+                        alert("No data found for this stock");
+                        return;
+                    }
+
+                    // Extracting dates and closing prices
+                    const labels = data.results.map(item => new Date(item.t).toLocaleDateString('en-US')); // Format to MM/DD/YYYY
+                    const prices = data.results.map(item => item.c);
+
+                    // Function to draw the chart
+                    renderChart(labels, prices, ticker);
+                } catch (error) {
+                    console.error("Error fetching stock data", error);
+                }
+            });
+
+            // Function to create or update the stock chart
+            function renderChart(labels, data, ticker) {
+                document.querySelector('.chart-container').style.display = 'block';
+
+                const ctx = document.getElementById('stock-chart').getContext('2d');
+
+                if (chart) chart.destroy();
+
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: `${ticker} Closing Prices`,
+                            data,
+                            borderColor: 'blue',
+                            fill: false,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Price (USD)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Javascript for Reddit table
+            async function populateReddittable() {
+                const apiUrl = "https://tradestie.com/api/v1/apps/reddit?date=2022-04-03";
+                try {
+                    const res = await fetch(apiUrl);
+                    const data = await res.json();
+                    
+                    const top5 = data.slice(0, 5);
+                    const tableBody = document.querySelector('#reddit-stocks tbody');
+                    tableBody.innerHTML = '';
+                    
+                    top5.forEach(stock => {
+                        const row = document.createElement('tr');
+                        const sentimentIcon = stock.sentiment.toLowerCase() === 'bullish'
+                ? '📈'
+                : stock.sentiment.toLowerCase() === 'bearish'
+                ? '📉'
+                : '❓';
+                const yahooLink = `https://finance.yahoo.com/quote/${stock.ticker}`;
+                
+                row.innerHTML = `
+                <td><a href="${yahooLink}" target="_blank">${stock.ticker}</a></td>
+                <td>${stock.no_of_comments}</td>
+                <td>${stock.sentiment} ${sentimentIcon}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Error fetching Reddit stocks", error);
+        const tableBody = document.querySelector('#reddit-stocks tbody');
+        tableBody.innerHTML = `<tr><td colspan="3">Error loading data</td></tr>`;
+    }
+}
+populateReddittable();
+
+</script>
+</body>
+</html>

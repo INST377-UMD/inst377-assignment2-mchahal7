@@ -1,0 +1,194 @@
+body {
+  background-color: antiquewhite;
+}
+
+/* Adds horizontal box */
+#main-nav {
+    background-color: lightcoral;
+    padding: 3px;
+    border: 2px solid black;
+}
+
+/* Remove bullet points */
+#main-nav ul {
+    list-style-type: none;
+    margin: 10;
+    padding: 3;
+    display: flex;
+    justify-content: center;
+    gap: 20px
+}
+
+#main-nav li a {
+    text-decoration: none;
+    color: black;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+#main-nav li a:hover {
+    background-color: lightgray;
+    color: black;
+}
+
+/* CSS for stocks and dogs button */
+.button-24 {
+  background: #FF4742;
+  border: 1px solid #FF4742;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 16px;
+  min-height: 40px;
+  outline: 0;
+  margin: 0 10px;
+  padding: 12px 14px;
+  text-align: center;
+  text-rendering: geometricprecision;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+}
+
+.button-24:hover,
+.button-24:active {
+  background-color: initial;
+  background-position: 0 0;
+  color: #FF4742;
+}
+
+.button-24:active {
+  opacity: .5;
+}
+
+#quote-box{
+    background-color: lightblue;
+    border: 2px solid black;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-style: italic;
+    text-align: center;
+    width: 80%;
+    margin: 30px auto;
+}
+
+/* Reddit Top 5 Stocks Table */
+#reddit-stocks {
+  border-collapse: collapse;
+  width: 40%;
+  margin: 20px auto;
+}
+
+#reddit-stocks th, #reddit-stocks td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
+}
+
+#reddit-stocks th {
+  background-color: lightcoral;
+  color: white;
+}
+
+/* Dogs Page */
+/* Carousel image */
+#dog-carousel {
+  width: 80%;
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+}
+
+.slider-container {
+  position: relative;
+  width: 600px;
+  margin: auto;
+  overflow: hidden;
+}
+
+.slider-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.carousel-image {
+  width: 100%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  background-color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.left-arrow {
+  left: 10px;
+}
+
+.right-arrow {
+  right: 10px;
+}
+
+/* Styling for breed info box */
+.breed-info-box {
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 8px;
+  padding: 5px 10px;
+  max-width: 400px;
+  margin: 20px auto;
+
+}
+
+/* Chart for stocks */
+.chart-container {
+  display: none;
+  width: 80%;
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 10px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 8px;
+}
+
+/* Audio Box */
+.audio-box {
+  border: 2px solid black;
+  border-radius: 8px;
+  background-color: lightseagreen;
+  color: white;
+  padding: 20px;
+  max-width: 800px;
+  margin: 20px auto;
+  text-align:justify;
+}
+
+.audio-button {
+  display: block;
+  border: 2px solid white;
+  border-radius: 8px;
+  background-color: white;
+  color: black;
+  width: 200px;
+  padding: 12px 18px;
+  margin: 10px auto;
+  cursor: pointer;
+}
